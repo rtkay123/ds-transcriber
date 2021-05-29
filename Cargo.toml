@@ -3,6 +3,8 @@ name = "ds-transcriber"
 version = "0.1.0"
 authors = ["Kawaki-san"]
 edition = "2018"
+description = "A crate using DeepSpeech bindings to convert mic audio from speech to text"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
