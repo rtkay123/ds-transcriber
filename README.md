@@ -23,7 +23,7 @@ Add the crate to your `Cargo.toml`
 
 ```toml
 [dependencies]
-cpal = "0.13.3"
+ds-transcriber = "0.1.0"
 ```
 
 Create a configuration wherever you want to use it
