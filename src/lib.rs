@@ -1,2 +1,3 @@
+pub mod config;
 pub mod stream;
-pub mod transcribe;
+pub mod transcriber;
