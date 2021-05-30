@@ -87,6 +87,8 @@ fn start(
                     }
                 }
             }
+        } else {
+            silence_start = None;
         }
     }
 }
