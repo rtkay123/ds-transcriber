@@ -47,7 +47,7 @@ After getting config ready, all you need to do is pass it to the function.:
 
 ```rs
 let i_said = ds_transcriber::transcriber::transcriber::transcribe(config);
-println!("I said: {}", i_said);
+println!("I said: {}", i_said.unwrap());
 ```
 
 ## Contributions
