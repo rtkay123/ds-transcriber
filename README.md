@@ -23,7 +23,7 @@ Add the crate to your `Cargo.toml`
 
 ```toml
 [dependencies]
-ds-transcriber = "0.1.1"
+ds-transcriber = "0.1.2"
 ```
 
 Create a configuration wherever you want to use it
@@ -46,8 +46,8 @@ let config = ds_transcriber::transcriber::StreamSettings {
 After getting config ready, all you need to do is pass it to the function.:
 
 ```rs
-let i_said = ds_transcriber::transcriber::transcriber::transcribe(config);
-println!("I said: {}", i_said.unwrap());
+    let i_said = ds_transcriber::transcriber::transcribe(config).unwrap();
+    println!("I said: {}", i_said);
 ```
 
 ## Contributions
