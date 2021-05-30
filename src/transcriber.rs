@@ -52,24 +52,19 @@ pub fn transcribe(config: StreamSettings) -> Option<String> {
     }
 }
 
-fn convert(audio_stream: &Vec<i16>, model_dir_str: &String) -> String {
+fn convert(audio_stream: &[i16], model_dir_str: &str) -> String {
     let dir_path = Path::new(&model_dir_str);
     let mut graph_name: Box<Path> = dir_path.join("output_graph.pb").into_boxed_path();
     let mut scorer_name: Option<Box<Path>> = None;
 
-    for file in dir_path
-        .read_dir()
-        .expect("Specified model dir is not a dir")
-    {
-        if let Ok(f) = file {
-            let file_path = f.path();
-            if file_path.is_file() {
-                if let Some(ext) = file_path.extension() {
-                    if ext == "pb" || ext == "pbmm" || ext == "tflite" {
-                        graph_name = file_path.into_boxed_path();
-                    } else if ext == "scorer" {
-                        scorer_name = Some(file_path.into_boxed_path());
-                    }
+    for file in dir_path.read_dir().into_iter().flatten() {
+        let file_path = file.unwrap().path();
+        if file_path.is_file() {
+            if let Some(ext) = file_path.extension() {
+                if ext == "pb" || ext == "pbmm" || ext == "tflite" {
+                    graph_name = file_path.into_boxed_path();
+                } else if ext == "scorer" {
+                    scorer_name = Some(file_path.into_boxed_path());
                 }
             }
         }
@@ -80,6 +75,5 @@ fn convert(audio_stream: &Vec<i16>, model_dir_str: &String) -> String {
         m.enable_external_scorer(&scorer).unwrap();
     }
 
-    let result = m.speech_to_text(audio_stream).unwrap();
-    result
+    m.speech_to_text(audio_stream).unwrap()
 }

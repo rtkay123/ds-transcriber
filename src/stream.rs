@@ -1,6 +1,7 @@
 //! Does the actual recording and white noise cleaning
 
 use std::{
+    ops::Neg,
     sync::mpsc::{channel, Receiver},
     time::Instant,
 };
@@ -76,7 +77,7 @@ fn start(
         if show_amplitude {
             println!("Min is {}, Max is {}", min_amplitude, max_amplitude);
         }
-        let silence_detected = max_amplitude < silence_level && min_amplitude > silence_level * -1;
+        let silence_detected = max_amplitude < silence_level && min_amplitude > silence_level.neg();
         if silence_detected {
             match silence_start {
                 None => silence_start = Some(Instant::now()),

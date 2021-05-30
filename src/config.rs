@@ -35,7 +35,7 @@ impl StreamConfig {
         let device = get_default_device();
         StreamConfig {
             config: get_config(&device),
-            device: device,
+            device,
             silence_level,
         }
     }
