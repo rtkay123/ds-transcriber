@@ -9,7 +9,7 @@ Records your mic, and returns a `String` containing what was said.
 - Begins transcription after a long enough pause has been detected
 - Change the length of the pause required to begin transcription
 - Shows you the audio levels of what is being recorded so that you can...
-- Change the audio level of what you seem as silence in your environment
+- Change the audio level of what you deem as silence in your environment
 
 Ds-Transcriber is backed by the awesome [cpal](https://github.com/RustAudio/cpal) for streaming and [nnnoiseless](https://github.com/jneem/nnnoiseless) for audio cleanup.
 
