@@ -26,13 +26,18 @@ Add the crate to your `Cargo.toml`
 ds-transcriber = "0.1.3"
 ```
 
-Create a configuration wherever you want to use it
+Instantiate your model:
 
 ```rust
     // the path where your model and native-client lie
     let model_dir_str = args().nth(1).expect("Please specify model dir");
     let mut ds_model = DeepSpeechModel::instantiate_from(model_dir_str);
     let model = ds_model.model();
+```
+
+Create a `mutable` configuration with your `model`
+
+```rust
     let mut config = ds_transcriber::transcriber::StreamSettings {
         //value used for pause detection, a pause is detected when the amplitude is less than this
         silence_level: 200,
@@ -40,21 +45,19 @@ Create a configuration wherever you want to use it
         model,
         // show the amplitude values on stdout (helps you to find your silence level)
         show_amplitudes: true,
-        // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
+        // seconds of silence indicating end of speech (begin transcription when pause_length is greater than....)
         pause_length: 2.0,
     };
 ```
 
-After getting config ready, all you need to do is pass it to the function:
+After getting `config` ready, all you need to do is pass it to `transcribe`:
 
 ```rust
     let i_said = ds_transcriber::transcriber::transcribe(&mut config).unwrap();
     println!("I said: {}", i_said);
-
-    // Reuse the same configuration for another transcription
-    let i_said = ds_transcriber::transcriber::transcribe(&mut config).unwrap();
-    println!("I also said: {}", i_said);
 ```
+
+Repeat the last step to get another transcription with the same configuration.
 
 ## Contributions
 
