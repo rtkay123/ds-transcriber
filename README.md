@@ -28,8 +28,8 @@ ds-transcriber = "0.1.3"
 
 Create a configuration wherever you want to use it
 
-```rs
-// the path where your model and native-client lie
+```rust
+    // the path where your model and native-client lie
     let model_dir_str = args().nth(1).expect("Please specify model dir");
     let mut ds_model = DeepSpeechModel::instantiate_from(model_dir_str);
     let model = ds_model.model();
@@ -47,11 +47,11 @@ Create a configuration wherever you want to use it
 
 After getting config ready, all you need to do is pass it to the function:
 
-```rs
+```rust
     let i_said = ds_transcriber::transcriber::transcribe(&mut config).unwrap();
     println!("I said: {}", i_said);
-    //
-    //Reuse the same configuration for another transcription
+
+    // Reuse the same configuration for another transcription
     let i_said = ds_transcriber::transcriber::transcribe(&mut config).unwrap();
     println!("I also said: {}", i_said);
 ```
