@@ -13,7 +13,7 @@ use crate::config::StreamConfig;
 
 ///
 /// # Recording Audio
-/// This function handles the audio recording process
+/// This function handles the audio recording process, parameters are obtained from `ds_transcriber::transcriber::StreamSettings`
 ///
 
 pub fn record_audio(
@@ -24,10 +24,10 @@ pub fn record_audio(
     let config = StreamConfig::new(silence_level);
     let (sound_sender, sound_receiver) = channel();
     let device = config.device();
-    let stream_config = config.config();
+    let stream_config = config.supported_config().config();
     let stream = device
         .build_input_stream(
-            &stream_config.into(),
+            &stream_config,
             move |data: &[f32], _: &_| {
                 sound_sender.send(data.to_owned()).unwrap();
             },

@@ -45,8 +45,9 @@ impl StreamConfig {
         &self.device
     }
 
-    pub fn config(&self) -> SupportedStreamConfig {
-        self.config.clone()
+    /// Returns SupportedStreamConfig (.config() returns the configuration we use on our stream)
+    pub fn supported_config(&self) -> &SupportedStreamConfig {
+        &self.config
     }
 
     /// Returns the silence level
