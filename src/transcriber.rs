@@ -8,20 +8,24 @@ use deepspeech::Model;
 ///
 /// Creates preferences for the configuration of the audio stream and transcription.
 /// ```
-/// let model_dir_str = args().nth(1).expect("Please specify model dir");
-/// let mut ds_model = DeepSpeechModel::instantiate_from(model_dir_str);
-/// let model = ds_model.model();
-///
-/// let mut config = ds_transcriber::transcriber::StreamSettings {
-///     //value used for pause detection, a pause is detected when the amplitude is less than this
-///     silence_level: 200,
-///     // takes a reference of the model we instantiated earlier
-///     model,
-///     // show the amplitude values on stdout (helps you to find your silence level)
-///     show_amplitudes: true,
-///     // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
-///     pause_length: 2.0,
-/// };
+/// use std::env::args;
+/// use ds_transcriber::model::DeepSpeechModel;
+/// # fn main() {
+///     if let Some(model_dir_str) = args().nth(1) {
+///         let mut ds_model = DeepSpeechModel::instantiate_from(model_dir_str);
+///         let model = ds_model.model();
+///         let mut config = ds_transcriber::transcriber::StreamSettings {
+///             //value used for pause detection, a pause is detected when the amplitude is less than this
+///             silence_level: 200,
+///             // takes a reference of the model we instantiated earlier
+///             model,
+///             // show the amplitude values on stdout (helps you to find your silence level)
+///             show_amplitudes: true,
+///             // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
+///             pause_length: 2.0,
+///         };
+///     }
+/// # }
 /// ```
 
 pub struct StreamSettings<'a> {
@@ -39,8 +43,27 @@ pub struct StreamSettings<'a> {
 /// # Usage
 /// After getting config ready, all you need to do is pass a ref of it to the function:
 /// ```
-/// let i_said = ds_transcriber::transcriber::transcriber::transcribe(&mut config).unwrap();
-/// println!("I said: {}", i_said);
+/// use std::env::args;
+/// use ds_transcriber::transcriber;
+/// # use ds_transcriber::model::DeepSpeechModel;
+/// # fn main() {
+///    # if let Some(model_dir_str) = args().nth(1) {
+///    #    let mut ds_model = DeepSpeechModel::instantiate_from(model_dir_str);
+///    #    let model = ds_model.model();
+///    #    let mut config = transcriber::StreamSettings {
+///    #     //value used for pause detection, a pause is detected when the amplitude is less than this
+///    #     silence_level: 200,
+///    #     // takes a reference of the model we instantiated earlier
+///    #     model,
+///    #     // show the amplitude values on stdout (helps you to find your silence level)
+///    #     show_amplitudes: true,
+///    #     // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
+///    #     pause_length: 2.0,
+///    #    };
+///         let i_said = transcriber::transcribe(&mut config).unwrap();
+///         println!("I said: {}", i_said);
+///    #  }
+/// # }
 /// ```
 
 pub fn transcribe(config: &mut StreamSettings) -> Option<String> {
