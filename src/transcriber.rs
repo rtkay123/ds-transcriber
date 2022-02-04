@@ -66,17 +66,18 @@ pub struct StreamSettings<'a> {
 /// # }
 /// ```
 
-pub fn transcribe(config: &mut StreamSettings) -> Option<String> {
+pub fn transcribe(config: &mut StreamSettings) -> Result<String, anyhow::Error> {
     match record_audio(
         config.silence_level,
         config.show_amplitudes,
         config.pause_length,
     ) {
-        Some(audio_stream) => Some(convert(&audio_stream, config.model)),
-        None => None,
+        Ok(audio_stream) => convert(&audio_stream, config.model),
+        Err(e) => Err(anyhow::anyhow!(e)),
     }
 }
 
-fn convert(audio_stream: &[i16], model: &mut Model) -> String {
-    model.speech_to_text(audio_stream).unwrap()
+fn convert(audio_stream: &[i16], model: &mut Model) -> Result<String, anyhow::Error> {
+    let buf = model.speech_to_text(audio_stream)?;
+    Ok(buf)
 }
