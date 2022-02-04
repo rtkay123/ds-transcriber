@@ -54,3 +54,14 @@ To start the example, run
 ```sh
 cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
 ```
+
+## Transcription Tips
+Downloading the DeepSpeech model alone will give you results that are passable, at best, (depending on your accent), if you want to significantly improve them, you might also want to download a [language model/scorer](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0). It helps in cases like: `I read a book last night` vs `I red a book last night`. Simply put the scorer in the same directory as your model. The crate will automatically set it when you create your `ds_transcriber::model::DeepSpeechModel`
+
+If you want to train your own model, for the best results, look into [Mimic Recording Studio](https://github.com/MycroftAI/mimic-recording-studio), it gives you prompts to read from and **automatically** prepares your audio files with their respective transcriptions for training which you can then use for [fine tuning](https://deepspeech.readthedocs.io/en/r0.9/TRAINING.html)
+
+## Other works
+I'm working on a digital assistant written completely in Rust. It will be taking advantage of `ds-transcriber`. It features offline natural language understanding with Bidirectional Encoder Representations from Transformers (BERT). If it is of interest, you can find it [here](https://github.com/kawaki-san/lyra)
+
+## Contributions
+Always welcome! Open an issue or a PR if you have something in mind
