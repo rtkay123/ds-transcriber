@@ -8,6 +8,7 @@ use std::{
 
 use cpal::traits::{DeviceTrait, StreamTrait};
 use log::error;
+#[cfg(feature = "denoise")]
 use nnnoiseless::DenoiseState;
 
 use crate::config::StreamConfig;
@@ -58,6 +59,7 @@ pub fn record_audio(
     }
 }
 
+#[cfg(feature = "denoise")]
 fn start(
     sound_receiver: &Receiver<Vec<f32>>,
     silence_level: i32,
@@ -91,6 +93,41 @@ fn start(
     }
 }
 
+#[cfg(not(feature = "denoise"))]
+fn start(
+    sound_receiver: &Receiver<Vec<f32>>,
+    silence_level: i32,
+    show_amplitude: bool,
+    pause_length: f32,
+) -> Result<Vec<f32>, anyhow::Error> {
+    let mut silence_start = None;
+    let mut sound_from_start_till_pause = vec![];
+    loop {
+        let small_sound_chunk = sound_receiver.recv()?;
+        sound_from_start_till_pause.extend(&small_sound_chunk);
+        let sound_as_ints = small_sound_chunk.iter().map(|f| (*f * 1000.0) as i32);
+        let max_amplitude = sound_as_ints.clone().max().unwrap_or(0);
+        let min_amplitude = sound_as_ints.clone().min().unwrap_or(0);
+        if show_amplitude {
+            println!("Min is {}, Max is {}", min_amplitude, max_amplitude);
+        }
+        let silence_detected = max_amplitude < silence_level && min_amplitude > silence_level.neg();
+        if silence_detected {
+            match silence_start {
+                None => silence_start = Some(Instant::now()),
+                Some(s) => {
+                    if s.elapsed().as_secs_f32() > pause_length {
+                        return Ok(sound_from_start_till_pause);
+                    }
+                }
+            }
+        } else {
+            silence_start = None;
+        }
+    }
+}
+
+#[cfg(feature = "denoise")]
 fn denoise(sound_from_start_till_pause: Vec<f32>) -> Vec<f32> {
     let mut output = Vec::new();
     let mut out_buf = [0.0; DenoiseState::FRAME_SIZE];

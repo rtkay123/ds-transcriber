@@ -8,6 +8,7 @@ use deepspeech::Model;
 ///
 #[allow(missing_debug_implementations)]
 pub struct DeepSpeechModel {
+    /// Stores the model
     pub model: Model,
 }
 
@@ -15,7 +16,7 @@ impl DeepSpeechModel {
     ///
     /// Accepts a string with the path of the deep speech model. Tested with DeepSpeech model versions `0.9.x`
     ///
-    pub fn instantiate_from(model_dir_str: impl AsRef<str>) -> Result<Self, anyhow::Error> {
+    pub fn new(model_dir_str: impl AsRef<str>) -> Result<Self, anyhow::Error> {
         let dir_path = Path::new(model_dir_str.as_ref());
         let mut graph_name: Box<Path> = dir_path.join("output_graph.pb").into_boxed_path();
         let mut scorer_name: Option<Box<Path>> = None;
@@ -43,7 +44,7 @@ impl DeepSpeechModel {
     }
 
     /// Returns a mutable reference of the model - Which we pass into `ds_transcriber::transcriber::StreamSettings`
-    pub fn model(&mut self) -> &mut Model {
+    pub fn prepared_model(&mut self) -> &mut Model {
         &mut self.model
     }
 }
