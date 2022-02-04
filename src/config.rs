@@ -63,11 +63,13 @@ impl StreamConfig {
 ///Returns the configuration of the mono channel
 fn get_config(device: &Device) -> Result<SupportedStreamConfig, anyhow::Error> {
     let mut config = device.default_input_config()?;
-    while config.channels() != 1 {
+    if config.channels() != 1 {
         let mut supported_configs_range = device.supported_input_configs()?;
         config = match supported_configs_range.next() {
-            Some(conf) => conf.with_sample_rate(SampleRate(SAMPLE_RATE)), //16K from deepspeech
-            None => break,
+            Some(conf) => {
+                conf.with_sample_rate(SampleRate(SAMPLE_RATE)) //16K from deepspeech
+            }
+            None => config,
         };
     }
     Ok(config)
