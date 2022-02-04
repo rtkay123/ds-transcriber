@@ -11,7 +11,7 @@ const SAMPLE_RATE: u32 = 16000;
 /// # Input device configuration
 /// Gets data ready to begin recording
 
-pub struct StreamConfig {
+pub(crate) struct StreamConfig {
     device: Device,
     config: SupportedStreamConfig,
     silence_level: i32,

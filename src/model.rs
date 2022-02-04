@@ -6,6 +6,7 @@ use deepspeech::Model;
 ///
 /// # Object to hold the model
 ///
+#[allow(missing_debug_implementations)]
 pub struct DeepSpeechModel {
     pub model: Model,
 }

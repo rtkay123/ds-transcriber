@@ -1,10 +1,13 @@
 [package]
 name = "ds-transcriber"
-version = "1.0.0"
+version = "1.0.0-alpha"
 authors = ["Rodney Kanjala <dev@kanjala.com>"]
 edition = "2021"
 description = "A crate using DeepSpeech bindings to convert mic audio from speech to text"
 license = "MIT"
+repository = "https://github.com/kawaki-san/ds-transcriber"
+keywords = [""]
+categories = ["accessibility", "multimedia::audio", "science"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
