@@ -34,7 +34,7 @@ pub fn record_audio(
                 error!("{}", e);
             }
         },
-        move |err| println!("Stream read error: {}", err),
+        move |err| error!("Stream read error: {}", err),
     )?;
 
     match stream.play() {

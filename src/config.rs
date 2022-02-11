@@ -4,6 +4,7 @@ use cpal::{
     traits::{DeviceTrait, HostTrait},
     Device, SampleRate, SupportedStreamConfig,
 };
+use log::error;
 
 const SAMPLE_RATE: u32 = 16000;
 
@@ -40,7 +41,10 @@ impl StreamConfig {
                 device,
                 silence_level,
             }),
-            Err(e) => Err(anyhow::anyhow!(e)),
+            Err(e) => {
+                error!("{}", e);
+                Err(anyhow::anyhow!(e))
+            }
         }
     }
 

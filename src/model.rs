@@ -2,6 +2,7 @@
 use std::path::Path;
 
 use deepspeech::Model;
+use log::trace;
 
 ///
 /// # Object to hold the model
@@ -35,8 +36,10 @@ impl DeepSpeechModel {
             }
         }
         let mut model = Model::load_from_files(&graph_name)?;
+        trace!("model created");
 
         if let Some(scorer) = scorer_name {
+            trace!("using scorer {:?}", scorer.file_name());
             model.enable_external_scorer(&scorer)?;
         }
 
