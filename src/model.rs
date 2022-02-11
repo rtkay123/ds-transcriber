@@ -5,7 +5,7 @@ use deepspeech::Model;
 use log::trace;
 
 ///
-/// # Object to hold the model
+/// # Struct to hold the model
 ///
 #[allow(missing_debug_implementations)]
 pub struct DeepSpeechModel {

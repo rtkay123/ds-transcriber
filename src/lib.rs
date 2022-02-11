@@ -69,9 +69,18 @@
 //! cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
 //! ```
 //!
+//! # Re-exports
+//!
+//! This crate also re-exports the `deepspeech` and `nnnoiseless` crates (if the `denoise` feature is enabled). You can use these re-exports instead of also depending on them separately.
+//!
 mod config;
 pub mod model;
 mod stream;
 /// Transcription workers
 pub use transcriber::{transcribe, StreamSettings};
 mod transcriber;
+
+/// # Re-exports
+pub use deepspeech;
+#[cfg(feature = "denoise")]
+pub use nnnoiseless;

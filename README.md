@@ -55,6 +55,10 @@ To start the example, run
 cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
 ```
 
+# Re-exports
+
+This crate also re-exports the `deepspeech` and `nnnoiseless` crates (if the `denoise` feature is enabled). You can use these re-exports instead of also depending on them separately.
+
 ## Transcription Tips
 Downloading the DeepSpeech model alone will give you results that are passable, at best, (depending on your accent), if you want to significantly improve them, you might also want to download a [language model/scorer](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0). It helps in cases like: `I read a book last night` vs `I red a book last night`. Simply put the scorer in the same directory as your model. The crate will automatically set it when you create your `ds_transcriber::model::DeepSpeechModel`
 
