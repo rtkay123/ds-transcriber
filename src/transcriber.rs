@@ -1,9 +1,8 @@
 //! Library's entry point. Converts the audio stream to text using DeepSpeech bindings
 
-use std::fmt::Debug;
-
 use crate::stream::record_audio;
 use deepspeech::Model;
+use std::fmt::Debug;
 
 ///
 /// # Example
@@ -14,40 +13,40 @@ use deepspeech::Model;
 /// use ds_transcriber::model::DeepSpeechModel;
 /// # fn main()->Result<(),Box<dyn std::error::Error>> {
 ///     if let Some(model_dir_str) = args().nth(1) {
-///         let mut ds_model = DeepSpeechModel::new(model_dir_str)?;
-///         let model = ds_model.prepared_model();
-///         let mut config = ds_transcriber::StreamSettings {
-///             //value used for pause detection, a pause is detected when the amplitude is less than this
-///             silence_level: 200,
-///             // takes a reference of the model we instantiated earlier
-///             model,
-///             // show the amplitude values on stdout (helps you to find your silence level)
-///             show_amplitudes: true,
-///             // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
-///             pause_length: 2.0,
-///         };
+///         let mut model = DeepSpeechModel::new(model_dir_str, None)?;
+///         let mut config = ds_transcriber::StreamSettings::default();
 ///     }
 ///    # Ok(())
 /// # }
 /// ```
-pub struct StreamSettings<'a> {
+#[derive(Debug, Clone, Copy)]
+pub struct StreamSettings {
     /// value used for pause detection, a pause is detected when the amplitude is less than this
     pub silence_level: i32,
-    /// the reference of the model we instantiated earlier
-    pub model: &'a mut Model,
     /// show the amplitude values on stdout (helps you to find your silence level)
     pub show_amplitudes: bool,
     /// seconds of silence indicating end of speech
-    pub pause_length: f32,
+    pub pause_length_millis: u32,
 }
 
-impl Debug for StreamSettings<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("StreamSettings")
-            .field("silence_level", &self.silence_level)
-            .field("amplitudes_in_stdout", &self.show_amplitudes)
-            .field("pause_length", &self.pause_length)
-            .finish()
+impl StreamSettings {
+    /// Create a new configuration for a mic stream
+    pub fn new(silence_level: i32, show_amplitudes: bool, pause_length_millis: u32) -> Self {
+        Self {
+            silence_level,
+            show_amplitudes,
+            pause_length_millis,
+        }
+    }
+}
+
+impl Default for StreamSettings {
+    fn default() -> Self {
+        Self {
+            silence_level: 200,
+            show_amplitudes: true,
+            pause_length_millis: 1000,
+        }
     }
 }
 
@@ -59,32 +58,23 @@ impl Debug for StreamSettings<'_> {
 /// # use ds_transcriber::model::DeepSpeechModel;
 /// # fn main()-> Result<(),Box<dyn std::error::Error>> {
 ///    # if let Some(model_dir_str) = args().nth(1) {
-///    #    let mut ds_model = DeepSpeechModel::new(model_dir_str)?;
-///    #    let model = ds_model.prepared_model();
-///    #    let mut config = ds_transcriber::StreamSettings {
-///    #     //value used for pause detection, a pause is detected when the amplitude is less than this
-///    #     silence_level: 200,
-///    #     // takes a reference of the model we instantiated earlier
-///    #     model,
-///    #     // show the amplitude values on stdout (helps you to find your silence level)
-///    #     show_amplitudes: true,
-///    #     // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
-///    #     pause_length: 2.0,
-///    #    };
-///         let i_said = ds_transcriber::transcribe(&mut config).unwrap();
+///    #    let mut model = DeepSpeechModel::new(model_dir_str, None)?;
+///    #    let config = ds_transcriber::StreamSettings::default();
+///         let i_said = ds_transcriber::transcribe(config,&mut model)?;
 ///         println!("I said: {}", i_said);
 ///    #  }
 ///    # Ok(())
 /// # }
 /// ```
 
-pub fn transcribe(config: &mut StreamSettings) -> Result<String, anyhow::Error> {
+pub fn transcribe(config: StreamSettings, model: &mut Model) -> Result<String, anyhow::Error> {
+    let pause_length_secs: f32 = (config.pause_length_millis / 1000) as f32;
     match record_audio(
         config.silence_level,
         config.show_amplitudes,
-        config.pause_length,
+        pause_length_secs,
     ) {
-        Ok(audio_stream) => convert(&audio_stream, config.model),
+        Ok(audio_stream) => convert(&audio_stream, model),
         Err(e) => Err(anyhow::anyhow!(e)),
     }
 }

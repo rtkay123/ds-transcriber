@@ -1,32 +1,37 @@
-use std::env::set_var;
+use std::{env::set_var, path::Path};
 
 fn main() -> Result<(), anyhow::Error> {
-    let model_path = initialise_app();
-    let mut model = ds_transcriber::model::DeepSpeechModel::new(model_path.as_ref())?;
-    let ds_model = model.prepared_model();
-    let mut config = ds_transcriber::StreamSettings {
-        //value used for pause detection, a pause is detected when the amplitude is less than this
-        silence_level: 200,
-        // takes a reference of the model we instantiated earlier
-        model: ds_model,
-        // show the amplitude values on stdout (helps you to find your silence level)
-        show_amplitudes: true,
-        // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
-        pause_length: 1.0,
-    };
-    let i_said = ds_transcriber::transcribe(&mut config)?;
+    let (model_path, scorer_path) = initialise_app();
+    let mut model = ds_transcriber::model::DeepSpeechModel::new(
+        model_path.as_ref(),
+        match scorer_path {
+            Some(scorer) => {
+                let val = Path::new(&scorer).to_owned();
+                Some(val.into_boxed_path())
+            }
+            None => None,
+        },
+    )?;
+    let i_said = ds_transcriber::transcribe(ds_transcriber::StreamSettings::default(), &mut model)?;
     println!("I said: {}", i_said);
     Ok(())
 }
 
-fn initialise_app() -> impl AsRef<str> {
-    let m = clap::app_from_crate!()
+fn initialise_app() -> (impl AsRef<str>, Option<String>) {
+    let m = clap::command!()
         .arg(
             clap::Arg::new("model_path")
                 .takes_value(true)
                 .short('m')
                 .long("model")
                 .help("Path to your DeepSpeech [.pb/.pbmm] model"),
+        )
+        .arg(
+            clap::Arg::new("scorer_path")
+                .takes_value(true)
+                .short('s')
+                .long("scorer")
+                .help("An optional path pointing to your DeepSpeech [.scorer] scorer"),
         )
         .arg(
             clap::Arg::new("native_client")
@@ -40,11 +45,12 @@ fn initialise_app() -> impl AsRef<str> {
         Some(val) => val,
         None => panic!("no model specified"),
     };
+    let scorer_path = m.value_of("scorer_path").map(|val| val.to_owned());
     let native_client = match m.value_of("native_client") {
         Some(val) => val,
         None => panic!("no native client specified"),
     };
     set_var("LD_LIBRARY_PATH", native_client);
     set_var("LIBRARY_PATH", native_client);
-    model_path.to_owned()
+    (model_path.to_owned(), scorer_path)
 }

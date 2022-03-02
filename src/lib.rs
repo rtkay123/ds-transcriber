@@ -25,25 +25,23 @@
 //! Download the DeepSpeech [native client](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0) and then add its directory to your `LD_LIBRARY_PATH` and
 //! `LIBRARY_PATH` variables.
 //!
+//! Have a look at [StreamSettings](StreamSettings) to fine tune the transcription stream to parameters that better suite
+//! your environment
+//!
 //! ```no_run
+//! # use std::{path::PathBuf, str::FromStr};
 //! # fn main()->Result<(),Box<dyn std::error::Error>>{
-//! let mut model = ds_transcriber::model::DeepSpeechModel::new("path_to_ds_model")?;
-//! let ds_model = model.prepared_model();
-//! let mut config = ds_transcriber::StreamSettings {
-//!     //value used for pause detection, a pause is detected when the amplitude is less than this
-//!     silence_level: 200,
-//!     // takes a reference of the model we instantiated earlier
-//!     model: ds_model,
-//!     // show the amplitude values on stdout (helps you to find your silence level)
-//!     show_amplitudes: true,
-//!     // seconds of silence indicating end of speech (begin transcribe when pause_length is grater than....)
-//!     pause_length: 1.0,
-//! };
-//! let i_said = ds_transcriber::transcribe(&mut config)?;
+//! let mut model = ds_transcriber::model::DeepSpeechModel::new(
+//!     "model_file.pbmm",
+//!     Some(PathBuf::from_str("scorer_file.scorer")?.into_boxed_path()),
+//! )?;
+//! let config = ds_transcriber::StreamSettings::default();
+//! let i_said = ds_transcriber::transcribe(config, &mut model)?;
 //! println!("I said: {}", i_said);
 //! # Ok(())
 //! # }
 //! ```
+//!
 //! Rinse and repeat the last two lines
 //!
 //! # Features
@@ -66,8 +64,9 @@
 //!
 //! To start the example, run
 //! ```sh
-//! cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
+//! cargo run --example transcribe -- -m model_file -s scorer_file -c deepspeech_native_client_dir
 //! ```
+//! The `s` or `--scorer` argument is optional, but it is recommended to set one.
 //!
 //! # Re-exports
 //!
