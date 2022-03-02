@@ -31,7 +31,7 @@
 //! ```no_run
 //! # use std::{path::PathBuf, str::FromStr};
 //! # fn main()->Result<(),Box<dyn std::error::Error>>{
-//! let mut model = ds_transcriber::model::DeepSpeechModel::new(
+//! let mut model = ds_transcriber::model::instance_model(
 //!     "model_file.pbmm",
 //!     Some(PathBuf::from_str("scorer_file.scorer")?.into_boxed_path()),
 //! )?;

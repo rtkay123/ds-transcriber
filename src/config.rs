@@ -1,5 +1,5 @@
 //! Initialises recording device and audio stream's silence level
-
+use anyhow::{anyhow, Result};
 use cpal::{
     traits::{DeviceTrait, HostTrait},
     Device, SampleRate, SupportedStreamConfig,
@@ -33,7 +33,7 @@ mod tests {
 
 impl StreamConfig {
     /// Creates a new stream configuration:
-    pub fn new(silence_level: i32) -> Result<Self, anyhow::Error> {
+    pub fn new(silence_level: i32) -> Result<Self> {
         let device = get_default_device()?;
         match get_config(&device) {
             Ok(config) => Ok(StreamConfig {
@@ -43,7 +43,7 @@ impl StreamConfig {
             }),
             Err(e) => {
                 error!("{}", e);
-                Err(anyhow::anyhow!(e))
+                Err(anyhow!(e))
             }
         }
     }
@@ -65,7 +65,7 @@ impl StreamConfig {
 }
 
 ///Returns the configuration of the mono channel
-fn get_config(device: &Device) -> Result<SupportedStreamConfig, anyhow::Error> {
+fn get_config(device: &Device) -> Result<SupportedStreamConfig> {
     let mut config = device.default_input_config()?;
     while config.channels() != 1 {
         let mut supported_configs_range = device.supported_input_configs()?;
@@ -76,10 +76,10 @@ fn get_config(device: &Device) -> Result<SupportedStreamConfig, anyhow::Error> {
     }
     Ok(config)
 }
-fn get_default_device() -> Result<Device, anyhow::Error> {
+fn get_default_device() -> Result<Device> {
     let host = cpal::default_host();
     match host.default_input_device() {
         Some(device) => Ok(device),
-        None => Err(anyhow::anyhow!("no input device found")),
+        None => Err(anyhow!("no input device found")),
     }
 }

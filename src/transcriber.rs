@@ -1,6 +1,7 @@
 //! Library's entry point. Converts the audio stream to text using DeepSpeech bindings
 
 use crate::stream::record_audio;
+use anyhow::Result;
 use deepspeech::Model;
 use std::fmt::Debug;
 
@@ -10,10 +11,10 @@ use std::fmt::Debug;
 /// Creates preferences for the configuration of the audio stream and transcription.
 /// ```
 /// use std::env::args;
-/// use ds_transcriber::model::DeepSpeechModel;
+/// use ds_transcriber::model::instance_model;
 /// # fn main()->Result<(),Box<dyn std::error::Error>> {
 ///     if let Some(model_dir_str) = args().nth(1) {
-///         let mut model = DeepSpeechModel::new(model_dir_str, None)?;
+///         let mut model = instance_model(&model_dir_str, None)?;
 ///         let mut config = ds_transcriber::StreamSettings::default();
 ///     }
 ///    # Ok(())
@@ -55,10 +56,10 @@ impl Default for StreamSettings {
 /// After getting config ready, all you need to do is pass a ref of it to the function:
 /// ```
 /// use std::env::args;
-/// # use ds_transcriber::model::DeepSpeechModel;
+/// # use ds_transcriber::model::instance_model;
 /// # fn main()-> Result<(),Box<dyn std::error::Error>> {
 ///    # if let Some(model_dir_str) = args().nth(1) {
-///    #    let mut model = DeepSpeechModel::new(model_dir_str, None)?;
+///    #    let mut model = instance_model(&model_dir_str, None)?;
 ///    #    let config = ds_transcriber::StreamSettings::default();
 ///         let i_said = ds_transcriber::transcribe(config,&mut model)?;
 ///         println!("I said: {}", i_said);
@@ -67,7 +68,7 @@ impl Default for StreamSettings {
 /// # }
 /// ```
 
-pub fn transcribe(config: StreamSettings, model: &mut Model) -> Result<String, anyhow::Error> {
+pub fn transcribe(config: StreamSettings, model: &mut Model) -> Result<String> {
     let pause_length_secs: f32 = (config.pause_length_millis / 1000) as f32;
     match record_audio(
         config.silence_level,
@@ -79,7 +80,7 @@ pub fn transcribe(config: StreamSettings, model: &mut Model) -> Result<String, a
     }
 }
 
-fn convert(audio_stream: &[i16], model: &mut Model) -> Result<String, anyhow::Error> {
+fn convert(audio_stream: &[i16], model: &mut Model) -> Result<String> {
     let buf = model.speech_to_text(audio_stream)?;
     Ok(buf)
 }

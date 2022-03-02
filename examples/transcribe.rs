@@ -2,7 +2,7 @@ use std::{env::set_var, path::Path};
 
 fn main() -> Result<(), anyhow::Error> {
     let (model_path, scorer_path) = initialise_app();
-    let mut model = ds_transcriber::model::DeepSpeechModel::new(
+    let mut model = ds_transcriber::model::instance_model(
         model_path.as_ref(),
         match scorer_path {
             Some(scorer) => {
