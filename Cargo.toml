@@ -6,7 +6,7 @@ edition = "2021"
 description = "A crate using DeepSpeech bindings to convert mic audio from speech to text"
 license = "MIT"
 repository = "https://github.com/kawaki-san/ds-transcriber"
-keywords = ["transcription", "speech to text", "microphone", "record", "speech detection"]
+keywords = ["transcription", "speech-to-text", "microphone", "record", "speech-detection"]
 categories = ["accessibility", "multimedia", "multimedia::audio", "science"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
