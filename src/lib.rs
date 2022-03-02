@@ -19,7 +19,7 @@
 //! First, add ds-transcriber to your `Cargo.toml`
 //!
 //! ```toml
-//! ds-transcriber = "1"
+//! ds-transcriber = "1.0.0-beta"
 //! ```
 //!
 //! Download the DeepSpeech [native client](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0) and then add its directory to your `LD_LIBRARY_PATH` and
@@ -51,7 +51,7 @@
 //! in the crate's features list
 //!
 //! ```toml
-//! ds-transcriber = { version = "1", features = ["denoise"] } # or features = ["full"]
+//! ds-transcriber = { version = "1.0.0-beta", features = ["denoise"] } # or features = ["full"]
 //! ```
 //!
 //! # Crate example

@@ -11,7 +11,7 @@ You can think of this crate as a wrapper for RustAudio's [deepspeech-rs](https:/
 This example shows the quickest way to get started with ds-transcriber. First, add `ds-transcriber` to your `Cargo.toml`
 
 ```toml
-ds-transcriber = "1"
+ds-transcriber = "1.0.0-beta"
 ```
 
 Download the DeepSpeech [native client](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0) and then add its directory to your `LD_LIBRARY_PATH` and `LIBRARY_PATH` variables.
@@ -34,7 +34,7 @@ Rinse and repeat the last two lines
 This crate provides an optional feature of denoising of the audio stream (may result in better transcription). It is **disabled by default**, to enable it: use either the `denoise` or `full` key in the crate's features list.
 
 ```toml
-ds-transcriber = { version = "1", features = ["denoise"] } # or features = ["full"]
+ds-transcriber = { version = "1.0.0-beta", features = ["denoise"] } # or features = ["full"]
 ```
 
 # Extras

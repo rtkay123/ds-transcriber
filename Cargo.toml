@@ -1,6 +1,6 @@
 [package]
 name = "ds-transcriber"
-version = "1.0.0-alpha-4"
+version = "1.0.0-beta.0"
 authors = ["Rodney Kanjala <dev@kanjala.com>"]
 edition = "2021"
 description = "A crate using DeepSpeech bindings to convert mic audio from speech to text"
