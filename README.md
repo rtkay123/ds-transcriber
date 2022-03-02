@@ -1,70 +1,65 @@
-# DS-TRANSCRIBER
+# ds-transcriber
+![GitHub](https://img.shields.io/github/license/kawaki-san/ds-transcriber) ![Crates.io](https://img.shields.io/crates/v/ds-transcriber) ![docs.rs](https://img.shields.io/docsrs/ds-transcriber)
+## A DeepSpeech powered utility for getting microphone stream transcriptions
 
-## _Need an Offline Speech To Text converter?_
+## Prelude
 
-Records your mic, and returns a `String` containing what was said.
+You can think of this crate as a wrapper for RustAudio's [deepspeech-rs](https://github.com/rustaudio/deepspeech-rs). It aims to provide transcription for microphone streams with optional denoising see `cargo-features` below.
 
-## Features
+##### Getting Started
 
-- Begins transcription after a long enough pause has been detected
-- Change the length of the pause required to begin transcription
-- Shows you the audio levels of what is being recorded so that you can...
-- Change the audio level of what you deem as silence in your environment
-
-Ds-Transcriber is backed by the awesome [cpal](https://github.com/RustAudio/cpal) for streaming and [nnnoiseless](https://github.com/jneem/nnnoiseless) for audio cleanup.
-
-## Setting Up
-
-You need to obtain the `deepspeech-model` (tested with `0.9.x`) and the `native-client` for your system and add that folder to your `LD_LIBRARY_PATH` and `LIBRARY_PATH` environment variables. See the [quick start](https://github.com/RustAudio/deepspeech-rs#quickstart) guide over at [deepspeech-rs](https://github.com/RustAudio/deepspeech-rs#quickstart).
-
-## Usage
-
-Add the crate to your `Cargo.toml`
+This example shows the quickest way to get started with ds-transcriber. First, add `ds-transcriber` to your `Cargo.toml`
 
 ```toml
-[dependencies]
-ds-transcriber = "0.1.3"
+ds-transcriber = "1.0.0-beta"
 ```
 
-Instantiate your model:
+Download the DeepSpeech [native client](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0) and then add its directory to your `LD_LIBRARY_PATH` and `LIBRARY_PATH` variables.
+
+Have a look at [StreamSettings](StreamSettings) to fine tune the transcription stream to parameters that better suit
+your environment
 
 ```rust
-    // the path where your model and native-client lie
-    let model_dir_str = args().nth(1).expect("Please specify model dir");
-    let mut ds_model = DeepSpeechModel::instantiate_from(model_dir_str);
-    let model = ds_model.model();
+let mut model = ds_transcriber::model::DeepSpeechModel::new(
+    "model_file.pbmm",
+    Some(PathBuf::from_str("scorer_file.scorer")?.into_boxed_path()),
+)?;
+let config = ds_transcriber::StreamSettings::default();
+let i_said = ds_transcriber::transcribe(config, &mut model)?;
+println!("I said: {}", i_said);
+```
+Rinse and repeat the last two lines
+
+## Cargo Features
+This crate provides an optional feature of denoising of the audio stream (may result in better transcription). It is **disabled by default**, to enable it: use either the `denoise` or `full` key in the crate's features list.
+
+```toml
+ds-transcriber = { version = "1.0.0-beta", features = ["denoise"] } # or features = ["full"]
 ```
 
-Create a `mutable` configuration with your `model`
+# Extras
+This crate contains an [example](examples/transcribe.rs) to get you started. 
+Clone the repository and run it:
 
-```rust
-    let mut config = ds_transcriber::transcriber::StreamSettings {
-        //value used for pause detection, a pause is detected when the amplitude is less than this
-        silence_level: 200,
-        // takes a reference of the model we instantiated earlier
-        model,
-        // show the amplitude values on stdout (helps you to find your silence level)
-        show_amplitudes: true,
-        // seconds of silence indicating end of speech (begin transcription when pause_length is greater than....)
-        pause_length: 2.0,
-    };
+For help with arguments, run:
+```sh
+cargo run --example transcribe -- -h
 ```
 
-After getting `config` ready, all you need to do is pass it to `transcribe`:
-
-```rust
-    let i_said = ds_transcriber::transcriber::transcribe(&mut config).unwrap();
-    println!("I said: {}", i_said);
+To start the example, run
+```sh
+cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
 ```
+An optional (but **recommended**) argument for a language model (scorer) can be provided with `-s` or `--scorer`
 
-Repeat the last step to get another transcription with the same configuration.
+# Re-exports
+
+This crate also re-exports the `deepspeech` and `nnnoiseless` crates (if the `denoise` feature is enabled). You can use these re-exports instead of also depending on them separately.
+
+## Transcription Tips
+Downloading the DeepSpeech model alone will give you results that are passable, at best, (depending on your accent), if you want to significantly improve them, you might also want to download a [language model/scorer](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0). It helps in cases like: `I read a book last night` vs `I red a book last night`. Simply put the scorer in the same directory as your model. The crate will automatically set it when you create your `ds_transcriber::model::DeepSpeechModel`
+
+If you want to train your own model, for the best results, look into [Mimic Recording Studio](https://github.com/MycroftAI/mimic-recording-studio), it gives you prompts to read from and **automatically** prepares your audio files with their respective transcriptions for training which you can then use for [fine tuning](https://deepspeech.readthedocs.io/en/r0.9/TRAINING.html)
 
 ## Contributions
-
-Heck yeah! Pull requests are the greatest thing since sliced bread.
-
-## License
-
-MIT
-
-**Free Software, Gotta love it!**
+Always welcome! Open an issue or a PR if you have something in mind
