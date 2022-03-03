@@ -48,9 +48,9 @@ cargo run --example transcribe -- -h
 
 To start the example, run
 ```sh
-cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
+cargo run --example transcribe -- -m model_path -c deepspeech_native_client_dir
 ```
-An optional (but **recommended**) argument for a language model (scorer) can be provided with `-s` or `--scorer`
+An optional (but **recommended**) argument for a language model (scorer) path can be provided with `-s` or `--scorer`
 
 # Re-exports
 
