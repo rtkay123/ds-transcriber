@@ -5,6 +5,8 @@ use anyhow::Result;
 use cpal::traits::{DeviceTrait, StreamTrait};
 use log::error;
 #[cfg(feature = "denoise")]
+use log::trace;
+#[cfg(feature = "denoise")]
 use nnnoiseless::DenoiseState;
 use std::{
     ops::Neg,
@@ -82,7 +84,7 @@ fn start(
                     if s.elapsed().as_secs_f32() > pause_length {
                         #[cfg(feature = "denoise")]
                         {
-                            println!("denoising");
+                            trace!("denoising stream");
                             return Ok(denoise(sound_from_start_till_pause));
                         }
                         return Ok(sound_from_start_till_pause);
