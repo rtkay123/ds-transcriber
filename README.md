@@ -20,7 +20,7 @@ Have a look at [StreamSettings](StreamSettings) to fine tune the transcription s
 your environment
 
 ```rust
-let mut model = ds_transcriber::model::DeepSpeechModel::new(
+let mut model = ds_transcriber::model::instance_model(
     "model_file.pbmm",
     Some(PathBuf::from_str("scorer_file.scorer")?.into_boxed_path()),
 )?;
