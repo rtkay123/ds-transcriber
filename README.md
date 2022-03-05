@@ -20,7 +20,7 @@ Have a look at [StreamSettings](StreamSettings) to fine tune the transcription s
 your environment
 
 ```rust
-let mut model = ds_transcriber::model::DeepSpeechModel::new(
+let mut model = ds_transcriber::model::instance_model(
     "model_file.pbmm",
     Some(PathBuf::from_str("scorer_file.scorer")?.into_boxed_path()),
 )?;
@@ -48,9 +48,9 @@ cargo run --example transcribe -- -h
 
 To start the example, run
 ```sh
-cargo run --example transcribe -- -m model_path_dir -c deepspeech_native_client_dir
+cargo run --example transcribe -- -m model_path -c deepspeech_native_client_dir
 ```
-An optional (but **recommended**) argument for a language model (scorer) can be provided with `-s` or `--scorer`
+An optional (but **recommended**) argument for a language model (scorer) path can be provided with `-s` or `--scorer`
 
 # Re-exports
 
