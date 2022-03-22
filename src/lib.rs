@@ -19,7 +19,7 @@
 //! First, add ds-transcriber to your `Cargo.toml`
 //!
 //! ```toml
-//! ds-transcriber = "1.0.0-beta"
+//! ds-transcriber = "1"
 //! ```
 //!
 //! Download the DeepSpeech [native client](https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.0) and then add its directory to your `LD_LIBRARY_PATH` and
@@ -33,7 +33,7 @@
 //! # fn main()->Result<(),Box<dyn std::error::Error>>{
 //! let mut model = ds_transcriber::model::instance_model(
 //!     "model_file.pbmm",
-//!     Some(PathBuf::from_str("scorer_file.scorer")?.into_boxed_path()),
+//!     Some("scorer_file.scorer"),
 //! )?;
 //! let config = ds_transcriber::StreamSettings::default();
 //! let i_said = ds_transcriber::transcribe(config, &mut model)?;
@@ -51,7 +51,7 @@
 //! in the crate's features list
 //!
 //! ```toml
-//! ds-transcriber = { version = "1.0.0-beta", features = ["denoise"] } # or features = ["full"]
+//! ds-transcriber = { version = "1", features = ["denoise"] } # or features = ["full"]
 //! ```
 //!
 //! # Crate example
