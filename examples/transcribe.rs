@@ -1,13 +1,14 @@
 use std::{env::set_var, path::Path};
 
 fn main() -> Result<(), anyhow::Error> {
+    let scorer_file;
     let (model_path, scorer_path) = initialise_app();
     let mut model = ds_transcriber::model::instance_model(
         model_path.as_ref(),
         match scorer_path {
             Some(scorer) => {
-                let val = Path::new(&scorer).to_owned();
-                Some(val.into_boxed_path())
+                scorer_file = scorer;
+                Some(scorer_file.as_ref())
             }
             None => None,
         },
@@ -17,7 +18,7 @@ fn main() -> Result<(), anyhow::Error> {
     Ok(())
 }
 
-fn initialise_app() -> (impl AsRef<str>, Option<String>) {
+fn initialise_app() -> (impl AsRef<Path>, Option<impl AsRef<Path>>) {
     let m = clap::command!()
         .arg(
             clap::Arg::new("model_path")
@@ -45,7 +46,7 @@ fn initialise_app() -> (impl AsRef<str>, Option<String>) {
         Some(val) => val,
         None => panic!("no model specified"),
     };
-    let scorer_path = m.value_of("scorer_path").map(|val| val.to_owned());
+    let scorer_path = m.value_of("scorer_path").map(String::from);
     let native_client = match m.value_of("native_client") {
         Some(val) => val,
         None => panic!("no native client specified"),
